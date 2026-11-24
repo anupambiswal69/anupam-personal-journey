@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1a1d18">
+    <meta name="description" content="Anupam's personal tracker for workouts, meals, habits, and spending.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Anupam">
+    <title>Anupam's Personal Journey</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./app-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { color-scheme: dark; --bg:#1a1d18; --panel:#22261f; --line:#3a3f35; --text:#f0f1e9; --muted:#a4a99b; --lime:#d3f36b; --coral:#ff907a; --display:"Space Grotesk",sans-serif; --body:"DM Sans",sans-serif; }
+        * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font:15px var(--body); }
+        button,input,textarea { font:inherit; } .shell { max-width:1200px; margin:auto; padding:0 32px 48px; }
+        .topbar { height:68px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+        .brand { display:flex; align-items:center; gap:10px; font:700 14px var(--display); } .mark { width:28px; height:28px; display:grid; place-items:center; border-radius:50%; color:var(--bg); background:var(--lime); font-size:19px; }
+        .install-button { min-height:36px; padding:0 12px; border:1px solid var(--lime); background:transparent; color:var(--lime); font-size:12px; font-weight:700; } .install-button[hidden] { display:none; }
+        .muted,.saved { color:var(--muted); font-size:12px; }
+        .hero { min-height:255px; margin:24px 0 30px; padding:32px 38px; display:flex; align-items:flex-end; position:relative; isolation:isolate; overflow:hidden; background:#393e33 url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=85") center 48%/cover; }
+        .hero:before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(17,20,16,.92),rgba(17,20,16,.42) 75%); }
+        .eyebrow { margin:0 0 12px; color:var(--lime); font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; }
+        h1 { max-width:620px; margin:0; font:600 54px/1 var(--display); } .hero p:last-child { color:#e4e6dc; }
+        .layout { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:38px; } .heading { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:15px; }
+        h2,h3 { font-family:var(--display); } h2 { margin:0; font-size:21px; } h3 { margin:0; font-size:21px; }
+        .session { padding:19px 0; display:grid; grid-template-columns:1fr auto; gap:8px; border-block:1px solid var(--line); }
+        .day-label { color:var(--lime); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; } .session p { margin:5px 0 0; color:var(--muted); }
+        .badge { height:max-content; padding:6px 9px; border:1px solid #59604c; color:var(--lime); font-size:10px; text-transform:uppercase; }
+        .commitments { margin:20px 0 27px; display:grid; grid-template-columns:1fr 1fr; gap:0 20px; border-top:1px solid var(--line); }
+        .commitment { min-height:58px; display:flex; align-items:center; gap:11px; border-bottom:1px solid var(--line); cursor:pointer; font-weight:600; }
+        .commitment input { width:18px; height:18px; margin:0; accent-color:var(--lime); } .commitment small { display:block; margin-top:3px; color:var(--muted); font-size:11px; font-weight:400; }
+        .commitment input:checked+span { color:var(--lime); }
+        .subheading,.journal-label { margin:24px 0 11px; font:600 15px var(--display); }
+        .meals { display:grid; grid-template-columns:1fr 1fr; gap:12px; } .meal label { display:block; margin-bottom:6px; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; }
+        textarea,.money { width:100%; padding:10px; border:1px solid var(--line); border-radius:0; outline:none; background:var(--panel); color:var(--text); line-height:1.45; }
+        textarea { min-height:70px; resize:vertical; } textarea:focus,.money:focus { border-color:var(--lime); } textarea::placeholder { color:#858b7c; }
+        .expense { padding:13px 0; display:grid; grid-template-columns:1fr 130px; align-items:center; gap:12px; border-top:1px solid var(--line); font-weight:600; }
+        .expense small { display:block; margin-top:3px; color:var(--muted); font-size:11px; font-weight:400; } .money { height:40px; }
+        .journal-label { display:block; } .journal { min-height:100px; }
+        .stats { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:17px 0 21px; border-bottom:1px solid var(--line); }
+        .stat strong { display:block; font:600 30px var(--display); } .stat span { color:var(--muted); font-size:11px; }
+        .progress { margin-top:17px; } .progress-label { display:flex; justify-content:space-between; margin-bottom:7px; color:var(--muted); font-size:11px; }
+        .track { height:5px; background:#3c4038; } .fill { width:0; height:100%; background:var(--lime); transition:width .25s; }
+        .days { margin-top:12px; max-height:430px; overflow:auto; border-top:1px solid var(--line); } .day-button { width:100%; min-height:42px; padding:0 8px; display:grid; grid-template-columns:45px 1fr auto; align-items:center; gap:8px; border:0; border-bottom:1px solid var(--line); background:none; color:var(--text); text-align:left; }
+        .day-button:hover { background:var(--panel); } .day-button.active { background:#2b3024; box-shadow:inset 2px 0 var(--lime); } .day-button.future { color:#8d9286; }
+        .day-number { color:var(--muted); font:600 11px var(--display); } .day-name { font-size:12px; font-weight:600; } .day-status { color:var(--muted); font-size:11px; }
+        .extend { width:100%; min-height:42px; margin-top:12px; border:1px solid var(--line); background:transparent; color:var(--lime); font-weight:600; } .extend:hover { background:#2b3024; }
+        .rule { margin-top:24px; padding:15px; border-left:2px solid var(--coral); background:var(--panel); } .rule strong { font:600 14px var(--display); } .rule p { margin:6px 0 0; color:var(--muted); font-size:11px; line-height:1.55; }
+        .footer { margin-top:34px; padding-top:14px; display:flex; justify-content:space-between; border-top:1px solid var(--line); color:var(--muted); font-size:11px; } .reset { border:0; background:none; color:var(--muted); text-decoration:underline; }
+        @media(max-width:740px) { .shell{padding:0 18px 36px}.hero{min-height:240px;padding:24px 22px;background-position:58% center}h1{font-size:40px}.layout{grid-template-columns:1fr;gap:34px} }
+        @media(max-width:430px) { .commitments,.meals{grid-template-columns:1fr}.expense{grid-template-columns:1fr 110px}.hero{min-height:220px} }
+        @media(prefers-reduced-motion:reduce) { *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important} }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <header class="topbar"><div class="brand"><span class="mark" aria-hidden="true">A</span>ANUPAM</div><div style="display:flex;align-items:center;gap:14px"><span class="saved" id="saved-status">Saved on this device</span><button class="install-button" id="install-button" type="button" hidden>Install app</button></div></header>
+        <section class="hero"><div><p class="eyebrow">Your journey · your plan</p><h1>Anupam's Personal Journey</h1><p>Keep a personal record of your workouts, meals, spending, and daily choices.</p></div></section>
+        <div class="layout">
+            <section>
+                <div class="heading"><h2>Daily check-in</h2><span class="muted" id="date-label"></span></div>
+                <div class="session"><div><div class="day-label" id="selected-label"></div><h3 id="session-title"></h3><p id="session-detail">Write down your day below.</p></div><span class="badge" id="session-type">DAILY LOG</span></div>
+                <label class="journal-label" for="activity">What did you do today?</label><textarea id="activity" placeholder="Your workout or anything else you want to record..."></textarea>
+                <div class="commitments">
+                    <label class="commitment"><input type="checkbox" data-commit="gym"><span>Never skip the gym<small>Recovery visits count too.</small></span></label>
+                    <label class="commitment"><input type="checkbox" data-commit="noJunk"><span>No junk food<small>Choose food that supports your goal.</small></span></label>
+                    <label class="commitment"><input type="checkbox" data-commit="selfControl"><span>Practice self-control<small>Pause before an impulse; choose intentionally.</small></span></label>
+                    <label class="commitment"><input type="checkbox" data-commit="noSpend"><span>Avoid unnecessary spending<small>Keep spending intentional.</small></span></label>
+                </div>
+                <h2 class="subheading">What did you eat?</h2>
+                <div class="meals"><div class="meal"><label for="breakfast">Breakfast</label><textarea id="breakfast" data-meal="breakfast" placeholder="Food and drinks..."></textarea></div><div class="meal"><label for="lunch">Lunch</label><textarea id="lunch" data-meal="lunch" placeholder="Food and drinks..."></textarea></div><div class="meal"><label for="dinner">Dinner</label><textarea id="dinner" data-meal="dinner" placeholder="Food and drinks..."></textarea></div><div class="meal"><label for="snacks">Snacks</label><textarea id="snacks" data-meal="snacks" placeholder="Snacks and extras..."></textarea></div></div>
+                <h2 class="subheading">Spending & reflection</h2>
+                <div class="expense"><label for="spending">Money spent today<small>Log all spending, planned or unplanned.</small></label><input class="money" id="spending" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+                <label class="journal-label" for="journal">Daily journal</label><textarea class="journal" id="journal" placeholder="What went well? What tested your self-control? What will you do differently tomorrow?"></textarea>
+            </section>
+            <aside>
+                <div class="heading"><h2>Your progress</h2><span class="muted" id="start-label"></span></div>
+                <div class="stats"><div class="stat"><strong id="streak">0</strong><span>gym day streak</span></div><div class="stat"><strong id="complete">0</strong><span>days logged</span></div></div>
+                <div class="progress"><div class="progress-label"><span>Gym visits</span><span id="progress-label">0 / 15</span></div><div class="track" id="progress-track" role="progressbar" aria-label="Gym visits" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0"><div class="fill" id="progress-fill"></div></div></div>
+                <div class="heading" style="margin-top:27px"><h2>Daily entries</h2><span class="muted" id="day-range">15 days</span></div><div class="days" id="days"></div>
+                <button class="extend" id="extend" type="button">+ Add 15 days</button>
+            </aside>
+        </div>
+        <footer class="footer"><span>Your entries stay in this browser on this device.</span><button class="reset" id="reset" type="button">Reset challenge</button></footer>
+    </main>
+    <script>
+        const key="anupam-personal-journey-v1", today=new Date(), iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+        const todayKey=iso(today), fresh=()=>({start:todayKey,target:15,days:{0:{activity:"Chest",gym:true,noJunk:false,selfControl:false,noSpend:false,meals:{breakfast:"",lunch:"",dinner:"",snacks:""},spending:"",journal:""}}});
+        let data;try{const saved=localStorage.getItem(key);data=saved?JSON.parse(saved):fresh();if(!data.start||!data.days)data=fresh();if(!Number.isInteger(data.target)||data.target<15)data.target=15;if(!saved)localStorage.setItem(key,JSON.stringify(data))}catch{data=fresh()}
+        const date=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}, offset=s=>Math.floor((date(s)-date(data.start))/86400000), current=()=>Math.max(0,offset(todayKey));
+        let selected=current();
+        function record(i){return data.days[i]||={activity:"",gym:false,noJunk:false,selfControl:false,noSpend:false,meals:{breakfast:"",lunch:"",dinner:"",snacks:""},spending:"",journal:""}}
+        function hasEntry(x){return Boolean(x.activity||x.gym||x.noJunk||x.selfControl||x.noSpend||x.spending||x.journal||Object.values(x.meals||{}).some(Boolean))}
+        function save(){localStorage.setItem(key,JSON.stringify(data));document.getElementById("saved-status").textContent="Saved just now";render()}
+        function render(){
+            const x=record(selected), d=date(data.start);d.setDate(d.getDate()+selected);const elapsed=offset(todayKey);
+            document.getElementById("date-label").textContent=d.toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});document.getElementById("selected-label").textContent=`DAY ${selected+1} · ${iso(d)===todayKey?"TODAY":d.toLocaleDateString(undefined,{month:"short",day:"numeric"})}`;
+            document.getElementById("session-title").textContent=x.activity||"Your daily entry";document.getElementById("session-type").textContent="DAILY LOG";document.getElementById("start-label").textContent=`Started ${date(data.start).toLocaleDateString(undefined,{month:"short",day:"numeric"})}`;
+            document.getElementById("activity").value=x.activity||"";
+            document.querySelectorAll("[data-commit]").forEach(el=>{el.checked=!!x[el.dataset.commit];el.disabled=selected>elapsed});document.querySelectorAll("[data-meal]").forEach(el=>{el.value=x.meals[el.dataset.meal]||"";el.disabled=selected>elapsed});
+            const spending=document.getElementById("spending"), journal=document.getElementById("journal");spending.value=x.spending;journal.value=x.journal;spending.disabled=journal.disabled=selected>elapsed;
+            let streak=0,cursor=Math.min(current(),data.target-1);if(cursor>=0&&!data.days[cursor]?.gym)cursor--;while(cursor>=0&&data.days[cursor]?.gym){streak++;cursor--}
+            const gymDays=Object.values(data.days).filter(v=>v.gym).length,loggedDays=Object.values(data.days).filter(hasEntry).length;document.getElementById("streak").textContent=streak;document.getElementById("complete").textContent=loggedDays;document.getElementById("progress-label").textContent=`${gymDays} / ${data.target}`;document.getElementById("progress-fill").style.width=`${Math.min(100,gymDays/data.target*100)}%`;const progress=document.getElementById("progress-track");progress.setAttribute("aria-valuemax",data.target);progress.setAttribute("aria-valuenow",gymDays);document.getElementById("day-range").textContent=`${data.target} days`;
+            const list=document.getElementById("days"),visibleDays=Math.max(data.target,current()+1);list.replaceChildren(...Array.from({length:visibleDays},(_,i)=>{const saved=data.days[i],future=i>elapsed,b=document.createElement("button");const entryDate=date(data.start);entryDate.setDate(entryDate.getDate()+i);b.type="button";b.className=`day-button${i===selected?" active":""}${future?" future":""}${saved?.gym?" complete":""}`;b.innerHTML=`<span class="day-number">DAY ${String(i+1).padStart(2,"0")}</span><span class="day-name">${saved?.activity||entryDate.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</span><span class="day-status">${saved?.gym?"Gym ✓":future?"Upcoming":hasEntry(saved||{})?"Logged":"—"}</span>`;b.addEventListener("click",()=>{selected=i;render()});return b}));document.getElementById("saved-status").textContent="Saved on this device";
+        }
+        document.querySelectorAll("[data-commit]").forEach(el=>el.addEventListener("change",()=>{record(selected)[el.dataset.commit]=el.checked;save()}));
+        document.getElementById("activity").addEventListener("input",e=>{record(selected).activity=e.target.value;localStorage.setItem(key,JSON.stringify(data));document.getElementById("session-title").textContent=e.target.value||"Your daily entry";document.getElementById("saved-status").textContent="Saved just now"});
+        document.querySelectorAll("[data-meal]").forEach(el=>el.addEventListener("input",()=>{record(selected).meals[el.dataset.meal]=el.value;localStorage.setItem(key,JSON.stringify(data))}));
+        document.getElementById("spending").addEventListener("input",e=>{record(selected).spending=e.target.value;localStorage.setItem(key,JSON.stringify(data))});document.getElementById("journal").addEventListener("input",e=>{record(selected).journal=e.target.value;localStorage.setItem(key,JSON.stringify(data))});
+        document.getElementById("extend").addEventListener("click",()=>{data.target+=15;save()});
+        document.getElementById("reset").addEventListener("click",()=>{if(confirm("Reset the journey and delete all saved entries?")){data=fresh();selected=0;save()}});render();
+
+        let installPrompt;
+        const installButton=document.getElementById("install-button");
+        window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;installButton.hidden=false});
+        window.addEventListener("appinstalled",()=>{installPrompt=null;installButton.hidden=true});
+        const isAppleMobile=/iphone|ipad|ipod/i.test(navigator.userAgent);
+        if(isAppleMobile&&!window.navigator.standalone)installButton.hidden=false;
+        installButton.addEventListener("click",async()=>{
+            if(installPrompt){installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installButton.hidden=true;return}
+            if(isAppleMobile)alert("To add Anupam: tap Share in Safari, then choose Add to Home Screen.");
+        });
+        if("serviceWorker" in navigator&&location.protocol!=="file:")navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+    </script>
+</body>
+</html>
